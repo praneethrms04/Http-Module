@@ -1,0 +1,136 @@
+<div class="container">
+  <div class="p-5">
+    <h3 class="text-center">Manage Products</h3>
+  </div>
+  <div class="row">
+    <div class="col color">
+      <div
+        class="text-danger border border-danger bg-white rounded"
+        *ngIf="posterrorMsg"
+      >
+        <p>{{ posterrorMsg }}</p>
+      </div>
+      <form #productForm="ngForm" (ngSubmit)="onCreate(productForm.value)">
+        <div class="mb-3">
+          <label for="name" class="form-label">Product Name</label>
+          <input
+            type="text"
+            class="form-control"
+            name="name"
+            ngModel
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="exampleInputPassword1" class="form-label"
+            >Product Description</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="description"
+            ngModel
+            required
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="exampleInputPassword1" class="form-label"
+            >Product Price</label
+          >
+          <input
+            type="number"
+            class="form-control"
+            name="price"
+            ngModel
+            required
+          />
+        </div>
+
+        <button
+          type="submit"
+          class="text-white"
+          [disabled]="productForm.invalid"
+          [ngStyle]="{
+            'background-color': '#11009e',
+            cursor: productForm.invalid ? 'not-allowed' : 'pointer',
+            opacity: productForm.invalid ? '0.2' : '1',
+            'border-radius': '10px'
+          }"
+        >
+          {{ editMode ? "Update Product" : "Add Product" }}
+        </button>
+      </form>
+    </div>
+    <div class="col">
+      <div class="container mt-4">
+        <table class="table">
+          <thead class="table-dark">
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Description</th>
+              <th>Price</th>
+              <th colspan="2" class="text-center">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="allProducts.length < 1 && !setLoading">
+              <td colspan="6" style="height: 40px; text-align: center">
+                No Products Available
+              </td>
+            </tr>
+            <tr *ngIf="setLoading && !errorMsg">
+              <td colspan="6" style="height: 40px; text-align: center">
+                Loading....
+              </td>
+            </tr>
+            <tr *ngIf="errorMsg">
+              <td colspan="6" style="height: 40px; text-align: center">
+                <p>
+                  {{ errorMsg }}
+                </p>
+                <button class="btn btn-danger" (click)="errorRemove()">
+                  Okay
+                </button>
+              </td>
+            </tr>
+            <ng-container *ngIf="!setLoading">
+              <tr *ngFor="let product of allProducts; index as i">
+                <td>{{ i + 1 }}</td>
+                <td>{{ product.name }}</td>
+                <td>{{ product.description }}</td>
+                <td>
+                  {{
+                    product.price | currency : "INR" : "symbol" | removedecimal
+                  }}
+                </td>
+                <td>
+                  <button (click)="onDelete(product.id)">Delete</button>
+                </td>
+                <td>
+                  <button (click)="onEdit(product.id)">Edit</button>
+                </td>
+              </tr>
+            </ng-container>
+          </tbody>
+        </table>
+        <button
+          type="button"
+          class="btn btn-primary gap-2"
+          (click)="fetchProducts()"
+        >
+          Fetch Products
+        </button>
+        <button
+          type="button"
+          class="btn btn-warning m-2 text-white"
+          (click)="onDeleteAllProducts()"
+        >
+          Clear Products
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
